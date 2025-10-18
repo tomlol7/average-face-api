@@ -3,5 +3,6 @@ gunicorn
 matplotlib
 average-facer
 opencv-python
-dlib
+dlib==19.24.0  # Use a pre-built wheel
+
 
