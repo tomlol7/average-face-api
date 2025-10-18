@@ -2,6 +2,32 @@ from flask import Flask, request, send_file, jsonify
 import tempfile, os
 from facer import facer
 import matplotlib.pyplot as plt
+import os
+import urllib.request
+import bz2
+
+model_dir = "./model"
+model_file = "shape_predictor_68_face_landmarks.dat"
+model_path = os.path.join(model_dir, model_file)
+model_url = "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2"
+
+# Create model folder if it doesn't exist
+os.makedirs(model_dir, exist_ok=True)
+
+# Download and decompress if the model does not exist
+if not os.path.exists(model_path):
+    print("Downloading dlib model (this may take a while)...")
+    bz2_path = model_path + ".bz2"
+    urllib.request.urlretrieve(model_url, bz2_path)
+    print("Download complete. Decompressing...")
+    with bz2.open(bz2_path, "rb") as f_in:
+        with open(model_path, "wb") as f_out:
+            f_out.write(f_in.read())
+    os.remove(bz2_path)
+    print("Model ready!")
+
+# Set environment variable for Facer
+os.environ["FACER_PREDICTOR_PATH"] = model_path
 
 app = Flask(__name__)
 
